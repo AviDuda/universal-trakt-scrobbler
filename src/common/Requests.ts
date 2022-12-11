@@ -1,18 +1,16 @@
 import { Messaging } from '@common/Messaging';
 import { RequestError } from '@common/RequestError';
-import { RequestsManager } from '@common/RequestsManager';
 import { Shared } from '@common/Shared';
-import axiosRateLimit from '@rafaelgomesxyz/axios-rate-limit';
-import axios, { AxiosResponse, Method } from 'axios';
 import browser from 'webextension-polyfill';
 
 export type RequestDetails = {
 	url: string;
 	method: string;
 	headers?: Record<string, string>;
-	rateLimit?: RateLimit;
 	body?: unknown;
+	signal?: AbortSignal;
 	cancelKey?: string;
+	rateLimit?: RateLimit;
 	priority?: RequestPriority;
 	withHeaders?: Record<string, string>;
 	withRateLimit?: RateLimitConfig;
@@ -76,7 +74,7 @@ class _Requests {
 		try {
 			const response = await this.fetch(request, tabId);
 			responseStatus = response.status;
-			responseText = response.data;
+			responseText = await response.text();
 			if (responseStatus < 200 || responseStatus >= 400) {
 				throw responseText;
 			}
@@ -85,38 +83,20 @@ class _Requests {
 				request,
 				status: responseStatus,
 				text: responseText,
-				isCanceled: err instanceof axios.Cancel,
+				isCanceled: request.signal?.aborted ?? false,
 			});
 		}
 		return responseText;
 	}
 
-	async fetch(request: RequestDetails, tabId = Shared.tabId): Promise<AxiosResponse<string>> {
+	async fetch(request: RequestDetails, tabId = Shared.tabId): Promise<Response> {
 		const options = await this.getOptions(request, tabId);
-		const cancelKey = `${tabId !== null ? `${tabId}_` : ''}${request.cancelKey || 'default'}`;
-		if (!RequestsManager.abortControllers.has(cancelKey)) {
-			RequestsManager.abortControllers.set(cancelKey, new AbortController());
-		}
-		const signal = RequestsManager.abortControllers.get(cancelKey)?.signal;
 
-		const rateLimit = request.rateLimit ?? this.getRateLimit(request);
-		let instance = RequestsManager.instances.get(rateLimit.id);
-		if (!instance) {
-			instance = axiosRateLimit(axios.create(), { maxRPS: rateLimit.maxRPS });
-			RequestsManager.instances.set(rateLimit.id, instance);
-		}
-
-		return instance.request({
-			url: request.url,
-			method: options.method as Method,
+		return fetch(request.url, {
+			method: options.method,
 			headers: options.headers,
-			data: options.body,
-			responseType: 'text',
-			signal,
-			transformResponse: (res: string) => res,
-
-			// @ts-expect-error Custom prop
-			priority: request.priority || RequestPriority.NORMAL,
+			body: options.body,
+			signal: request.signal,
 		});
 	}
 

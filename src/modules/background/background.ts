@@ -7,7 +7,6 @@ import { Errors } from '@common/Errors';
 import { EventDispatcher } from '@common/Events';
 import { Messaging } from '@common/Messaging';
 import { Notifications } from '@common/Notifications';
-import { Requests } from '@common/Requests';
 import { RequestsManager } from '@common/RequestsManager';
 import { ScriptInjector } from '@common/ScriptInjector';
 import { Shared } from '@common/Shared';
@@ -54,7 +53,7 @@ Messaging.addHandlers({
 
 	logout: () => TraktAuth.revokeToken(),
 
-	'send-request': (message, tabId) => Requests.send(message.request, tabId),
+	'send-request': (message, tabId) => RequestsManager.enqueue(message.request, tabId),
 
 	'set-title': (message) => BrowserAction.setTitle(message.title),
 
