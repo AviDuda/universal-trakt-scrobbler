@@ -25,13 +25,11 @@
 4. Click "Load unpacked"
 5. Select the folder you unzipped
 
-### Loading the extension manually on Firefox
+### Loading the extension on Firefox
 
-1. Go to about:debugging#/runtime/this-firefox
-2. Click "Load Temporary Add-on"
-3. Select `firefox.zip`
+The extension is available in the Firefox store. Install it from [here](https://addons.mozilla.org/en-US/firefox/addon/universal-trakt-scrobbler/).
 
-We are working on getting the extension in the Chrome and Firefox stores ASAP.
+We are working on getting the extension in the Chrome and store ASAP.
 
 ### Table of Contents
 
@@ -66,6 +64,7 @@ If you want to scrobble / sync from Netflix, this is the only Trakt.tv [plugin](
 |     GoPlay BE     |    ✔️    |  ❌  | -                               |
 |      HBO Go       |    ✔️    |  ❌  | -                               |
 |      HBO Max      |    ✔️    |  ✔️  | -                               |
+|      Hotstar      |    ✔️    |  ❌  | -                               |
 |      Kijk.nl      |    ✔️    |  ❌  | -                               |
 |      Netflix      |    ✔️    |  ✔️  | -                               |
 |        NRK        |    ✔️    |  ✔️  | -                               |
@@ -127,26 +126,26 @@ nvm use
 6. Install the dependencies.
 
 ```bash
-npm install
+pnpm install
 ```
 
 - To run in development mode:
 
 ```bash
-npm start
+pnpm start
 ```
 
 - To get the build version for development mode (does not watch files):
 
 ```bash
-npm run build-dev
+pnpm run build-dev
 ```
 
 - To get the build version for production mode (generates app.zip, ready for deployment):
 
 ```bash
-npm run build
-npm run zip
+pnpm run build
+pnpm run zip
 ```
 
 #### How to add more streaming services
