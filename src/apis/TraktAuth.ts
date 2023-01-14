@@ -37,7 +37,11 @@ class _TraktAuth extends TraktApi {
 	}
 
 	getRedirectUrl(): string {
-		return this.isIdentityAvailable ? browser.identity.getRedirectURL() : this.REDIRECT_URL;
+		const requiresCookies =
+			Shared.browser === 'firefox' ? !!Shared.storage.options.grantCookies : false;
+		return this.isIdentityAvailable && !requiresCookies
+			? browser.identity.getRedirectURL()
+			: this.REDIRECT_URL;
 	}
 
 	getCode(redirectUrl: string): string {
@@ -51,10 +55,8 @@ class _TraktAuth extends TraktApi {
 
 	authorize(): Promise<TraktAuthDetails> {
 		let promise: Promise<TraktAuthDetails>;
-		let requiresCookies = false;
-		if (Shared.browser === 'firefox') {
-			requiresCookies = !!Shared.storage.options.grantCookies;
-		}
+		const requiresCookies =
+			Shared.browser === 'firefox' ? !!Shared.storage.options.grantCookies : false;
 		if (this.isIdentityAvailable && !requiresCookies) {
 			promise = this.startIdentityAuth();
 		} else {
