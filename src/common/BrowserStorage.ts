@@ -18,7 +18,7 @@ export type StorageValues = StorageValuesV10;
 export type StorageValuesOptions = StorageValuesOptionsV4;
 export type StorageValuesSyncOptions = StorageValuesSyncOptionsV3;
 
-export type StorageValuesV10 = Omit<StorageValuesV8, 'version' | 'options'> & {
+export type StorageValuesV10 = Omit<StorageValuesV9, 'version' | 'options'> & {
 	version?: 10;
 	options?: StorageValuesOptionsV4;
 };
@@ -397,6 +397,10 @@ class _BrowserStorage {
 	 * They are only separated by type, to make it easier to understand the downgrade process.
 	 */
 	async downgrade(version: number) {
+		if (version > 10 && this.currentVersion <= 10) {
+			console.log('Downgrading to v10...');
+		}
+
 		if (version > 9 && this.currentVersion <= 9) {
 			console.log('Downgrading to v9...');
 
