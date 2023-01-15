@@ -1,4 +1,4 @@
-import browser from 'webextension-polyfill';
+import browser, { Storage as WebExtStorage } from 'webextension-polyfill';
 import { Shared } from '@common/Shared';
 
 export interface SessionStorageValues {
@@ -6,8 +6,11 @@ export interface SessionStorageValues {
 }
 
 class _SessionStorage {
-	// @ts-expect-error `session` is a newer key, so it's missing from the types.
-	instance = Shared.manifestVersion === 3 ? browser.storage.session : browser.storage.local;
+	instance =
+		Shared.manifestVersion === 3
+			? // @ts-expect-error `session` is a newer key, so it's missing from the types.
+			  (browser.storage.session as WebExtStorage.LocalStorageArea)
+			: browser.storage.local;
 
 	async set(values: SessionStorageValues): Promise<void> {
 		return this.instance.set(values);

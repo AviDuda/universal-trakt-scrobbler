@@ -171,7 +171,7 @@ class _Messaging {
 
 	init() {
 		if (Shared.pageType === 'content') {
-			this.toExtension({ action: 'connect-content-script' });
+			void this.toExtension({ action: 'connect-content-script' });
 		}
 	}
 
@@ -187,16 +187,17 @@ class _Messaging {
 
 	async connectContentScript(message: ConnectContentScriptMessage, tabId: number | null) {
 		if (tabId !== null) {
-			void Shared.events.dispatch('CONTENT_SCRIPT_CONNECT', null, { tabId });
+			await Shared.events.dispatch('CONTENT_SCRIPT_CONNECT', null, { tabId });
 		}
 	}
 
-	private onTabRemoved = async (tabId: number) => {
-		const values = await SessionStorage.get('injectedContentScriptTabs');
-		const injectedContentScriptTabs = new Set(values.injectedContentScriptTabs ?? []);
-		if (injectedContentScriptTabs.has(tabId)) {
-			void Shared.events.dispatch('CONTENT_SCRIPT_DISCONNECT', null, { tabId });
-		}
+	private onTabRemoved = (tabId: number) => {
+		void SessionStorage.get('injectedContentScriptTabs').then((values) => {
+			const injectedContentScriptTabs = new Set(values.injectedContentScriptTabs ?? []);
+			if (injectedContentScriptTabs.has(tabId)) {
+				void Shared.events.dispatch('CONTENT_SCRIPT_DISCONNECT', null, { tabId });
+			}
+		});
 	};
 
 	private onMessage = <T extends MessageRequest>(

@@ -201,15 +201,15 @@ class _ScriptInjector {
 			const id = `${serviceId}-${key}`;
 
 			if (Shared.manifestVersion === 3 && tabId !== null) {
-				browser.scripting
+				void browser.scripting
 					.executeScript({
 						target: { tabId },
 						func: Shared.functionsToInject[id],
 						args: [params],
 					})
 					.then((results) => {
-						const value = results[0].result;
-						resolve(value as T | null);
+						const value = results[0].result as T | null;
+						resolve(value);
 					});
 				return;
 			}
@@ -226,15 +226,15 @@ class _ScriptInjector {
 						func: Shared.functionsToInject[id],
 						args: [params],
 					});
-					value = results[0].result;
+					value = results[0].result as T | null;
 				} else {
-					value = await Messaging.toContent(
+					value = (await Messaging.toContent(
 						{ action: 'inject-function', serviceId, key, url, params },
 						tabId
-					);
+					)) as T | null;
 				}
 				void browser.tabs.remove(tabId);
-				resolve(value as T | null);
+				resolve(value);
 
 				Shared.events.unsubscribe('CONTENT_SCRIPT_CONNECT', null, onScriptConnect);
 			};
