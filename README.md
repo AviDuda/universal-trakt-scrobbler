@@ -61,6 +61,7 @@ If you want to scrobble / sync from Netflix, this is the only Trakt.tv [plugin](
 |       AMC+        |    ✔️    |  ❌  | -                               |
 |    Crunchyroll    |    ❌    |  ✔️  | Can't identify movies as movies |
 |      Disney+      |    ✔️    |  ❌  | -                               |
+|        Go3        |    ✔️    |  ❌  | -                               |
 |     GoPlay BE     |    ✔️    |  ❌  | -                               |
 |      HBO Go       |    ✔️    |  ❌  | -                               |
 |      HBO Max      |    ✔️    |  ✔️  | -                               |
@@ -72,6 +73,7 @@ If you want to scrobble / sync from Netflix, this is the only Trakt.tv [plugin](
 |  Polsatboxgo.pl   |    ✔️    |  ❌  | -                               |
 |       Star+       |    ✔️    |  ❌  | -                               |
 |    Streamz BE     |    ✔️    |  ❌  | -                               |
+|      Tet TV+      |    ✔️    |  ❌  | -                               |
 |      Viaplay      |    ✔️    |  ✔️  | -                               |
 |     VRTNu BE      |    ✔️    |  ❌  | -                               |
 |     VTMGo BE      |    ✔️    |  ❌  | -                               |
@@ -111,7 +113,7 @@ Never delete the `translations` branch after merging PRs from Crowdin, as Crowdi
 1. Create an application in the [Trakt API](https://trakt.tv/oauth/applications/new) (don't forget to check the `/scrobble` permission).
 2. In `Redirect uri:`, put `https://trakt.tv/apps`.
 3. In `Javascript (cors) origins:`, put `moz-extension://` and `chrome-extension://`.
-4. Copy the `.env.example` example file and change the Trakt.tv credentials.
+4. Copy the `.env.example` example file and change the Trakt.tv credentials. Make sure to also set the extension ID to an arbitrary but unique string, otherwise some browser features might not be available to the extension.
 
 ```bash
 cp .env.example .env

@@ -188,7 +188,7 @@ class _NetflixApi extends ServiceApi {
 				});
 				this.session = this.extractSession(responseText);
 			}
-			if (this.session) {
+			if (this.session?.profileName != null) {
 				this.isActivated = true;
 			}
 		} catch (err) {
@@ -203,7 +203,7 @@ class _NetflixApi extends ServiceApi {
 		if (!this.isActivated) {
 			await this.activate();
 		}
-		return !!this.session && this.session.profileName !== null;
+		return this.session?.profileName != null;
 	}
 
 	async loadHistoryItems(): Promise<NetflixHistoryItem[]> {
@@ -328,7 +328,7 @@ class _NetflixApi extends ServiceApi {
 			// `hiddenEpisodeNumbers` is `true` for collections
 			// In this case, the episode should be searched by title instead of season and number,
 			// because the numbering differs between Netflix and Trakt.tv for collections
-			if (!historyItem.season?.summary.hiddenEpisodeNumbers) {
+			if (historyItem.season?.summary.hiddenEpisodeNumbers === false) {
 				season = historyItem.summary.season || 0;
 				number = historyItem.summary.episode || 0;
 			}
